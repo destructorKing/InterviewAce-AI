@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import QuestionCard from './QuestionCard';
 
 function App() {
   const [resumeText, setResumeText] = useState('');
@@ -23,6 +24,7 @@ function App() {
       alert("Resume parsed successfully!");
     } catch (err) {
       console.error("Upload error", err);
+      alert("Error parsing resume.");
     }
   };
 
@@ -42,26 +44,28 @@ function App() {
       setQuestions(data);
     } catch (err) {
       console.error(err);
+      alert("Failed to generate questions.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div style={{ padding: '2rem', fontFamily: 'sans-serif', maxWidth: '800px', margin: '0 auto' }}>
+    <div style={{ padding: '2rem', fontFamily: 'system-ui, sans-serif', maxWidth: '800px', margin: '0 auto', textAlign: 'center' }}>
       <h1>InterviewAce AI Copilot</h1>
+      <p style={{ color: '#666' }}>Upload your resume, paste a target description, and practice your responses.</p>
       
-      <div style={{ marginBottom: '1.5rem' }}>
+      <div style={{ marginBottom: '1.5rem', textAlign: 'left', background: '#fff', padding: '1rem', border: '1px solid #e2e8f0', borderRadius: '6px' }}>
         <label><strong>1. Upload Resume (PDF Only):</strong></label><br />
-        <input type="file" accept=".pdf" onChange={handleFileUpload} />
+        <input type="file" accept=".pdf" onChange={handleFileUpload} style={{ marginTop: '0.5rem' }} />
       </div>
 
-      <div style={{ marginBottom: '1.5rem' }}>
+      <div style={{ marginBottom: '1.5rem', textAlign: 'left' }}>
         <label><strong>2. Target Job Description:</strong></label><br />
         <textarea 
           rows="5" 
-          style={{ width: '100%', marginTop: '0.5rem' }} 
-          placeholder="Paste the job requirements here..."
+          style={{ width: '100%', marginTop: '0.5rem', padding: '0.5rem', boxSizing: 'border-box', borderRadius: '4px', border: '1px solid #ccc' }} 
+          placeholder="Paste the target job description requirements here..."
           value={jobDescription}
           onChange={(e) => setJobDescription(e.target.value)}
         />
@@ -70,22 +74,18 @@ function App() {
       <button 
         onClick={handleGenerate} 
         disabled={loading}
-        style={{ padding: '0.75rem 1.5rem', background: '#0070f3', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+        style={{ padding: '0.75rem 1.5rem', background: '#0070f3', color: '#fff', border: 'none', borderRadius: '4px', cursor: loading ? 'not-allowed' : 'pointer', fontSize: '1rem' }}
       >
         {loading ? 'Analyzing with Gemini...' : 'Generate Interview Path'}
       </button>
 
-      <hr style={{ margin: '2rem 0' }} />
+      <hr style={{ margin: '2.5rem 0', borderColor: '#eaeaea' }} />
 
       {questions.length > 0 && (
         <div>
-          <h2>Your Tailored Interview Questions</h2>
+          <h2 style={{ marginBottom: '1.5rem' }}>Your Tailored Interview Questions</h2>
           {questions.map((q) => (
-            <div key={q.id} style={{ border: '1px solid #ddd', padding: '1rem', borderRadius: '8px', marginBottom: '1rem', background: '#f9f9f9' }}>
-              <span style={{ fontSize: '0.8rem', fontWeight: 'bold', color: '#0070f3', uppercase: 'true' }}>{q.type}</span>
-              <p style={{ margin: '0.5rem 0', fontSize: '1.1rem' }}><strong>{q.question}</strong></p>
-              <small style={{ color: '#666' }}>💡 <em>Context: {q.context}</em></small>
-            </div>
+            <QuestionCard key={q.id} q={q} />
           ))}
         </div>
       )}
