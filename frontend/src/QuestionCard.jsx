@@ -13,9 +13,8 @@ export default function QuestionCard({ q }) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          question: q.question,
-          user_answer: answer,
-          question_type: q.type
+          question_id: q.id,  // <-- CHANGED: Pass the database integer ID
+          user_answer: answer // <-- Pass the typed response string
         }),
       });
       
