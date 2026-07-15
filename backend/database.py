@@ -8,7 +8,6 @@ load_dotenv()
 
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./interview_ace.db")
 
-# Basic engine config for SQLite
 engine = create_engine(
     DATABASE_URL, connect_args={"check_same_thread": False}
 )
@@ -24,7 +23,6 @@ class InterviewSession(Base):
     job_description = Column(Text)
     created_at = Column(DateTime, default=datetime.utcnow)
 
-    # Establish relationship to child items
     questions = relationship("QuestionModel", back_populates="session", cascade="all, delete-orphan")
 
 class QuestionModel(Base):
@@ -37,16 +35,14 @@ class QuestionModel(Base):
     context = Column(Text)
     user_answer = Column(Text, nullable=True)
     score = Column(Integer, nullable=True)
-    feedback = Column(Text, nullable=True)  # Will store JSON strings of string lists
+    feedback = Column(Text, nullable=True)  
     suggested_improvement = Column(Text, nullable=True)
 
     session = relationship("InterviewSession", back_populates="questions")
 
-# Helper function to create tables on startup
 def init_db():
     Base.metadata.create_all(bind=engine)
 
-# FastAPI dependency to yield safe localized sessions per request
 def get_db():
     db = SessionLocal()
     try:
